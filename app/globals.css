@@ -3,12 +3,12 @@
 @import "tailwindcss";
 
 @theme {
-  --color-theme: "#FF6C0C";
-  --color-theme-alt: "#BF1A1A";
-  --color-theme-cont: "#060771";
-  --color-theme-cont-alt: "#050660";
-  --color-theme-w: "#ffffff";
-  --color-theme-w-alt: "#efefef";
-  --font-main: '"Roboto", serif';
-  --font-main-alt: '"Ysabeau SC", serif;';
+  --color-theme: #FF6C0C;
+  --color-theme-alt: #BF1A1A;
+  --color-theme-cont: #060771;
+  --color-theme-cont-alt: #050660;
+  --color-theme-w: #ffffff;
+  --color-theme-w-alt: #efefef;
+  --font-main: "Roboto", serif;
+  --font-main-alt: "Ysabeau SC", serif;
 }
