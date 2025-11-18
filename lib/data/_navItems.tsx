@@ -5,7 +5,7 @@ export const _navItems = [
     },
     {
         title: "Menu",
-        url: "#"
+        url: "/menu"
     },
     {
         title: "Login",

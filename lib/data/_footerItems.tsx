@@ -1,11 +1,11 @@
 export const _footerItems = [
     {
         title: "Home",
-        url: "#"
+        url: "/"
     },
     {
         title: "Sitemap",
-        url: "#"
+        url: "/sitemap"
     }
 ];
 
