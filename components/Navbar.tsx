@@ -9,7 +9,7 @@ interface INavItem {
 
 const Navbar = () => {
   return (
-    <nav className="flex flex-row justify-evenly items-center bg-white shadow-md text-theme font-bold px-[10%] fixed w-full">
+    <nav className="z-50 flex flex-row justify-evenly items-center bg-white shadow-md text-theme font-bold px-[10%] fixed w-full">
         {
             _navItems.map((props, ind) => {
                 return <NavItem key={ind} {...props} />
