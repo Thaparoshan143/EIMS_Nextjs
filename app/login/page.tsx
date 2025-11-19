@@ -1,39 +1,100 @@
 'use client'
 
 import ThemeButton from "@/components/ThemeButton";
-import { useState } from "react";
+import { verifyUser } from "@/lib/utils/util";
+import { useRouter } from "next/navigation";
+import { showToast, ToastOptions } from "nextjs-toast-notify";
+import { useEffect, useState } from "react";
 
 interface IUserCred {
   user: string,
   password: string
 };
 
+interface ILoginMsg
+{
+  type: "error" | "info" | "success" | "warning",
+  text?: string,
+};
+
 export default function Login() {
 
   const [cred, setCred] = useState<IUserCred>({ user: '', password: '' });
+  const router = useRouter();
+  const [msg, setMsg] = useState<ILoginMsg>(); // this is toast message..
+  let adminToken = process.env.NEXT_PUBLIC_ADMIN_CRED_TOKEN;
 
   const setUser = (val: string) => {
-    setCred((prev) => {
-      const nV = {...prev};
-      nV.user = val;
-      return nV;
-    })
+    setCred((prev) => ({...prev, user: val}))
   }
   
   const setPassword = (val: string) => {
-    setCred((prev) => {
-      const nV = {...prev};
-      nV.password = val;
-      return nV;
-    })
+    setCred((prev) => ({...prev, password: val}))
+  }
+
+  const toastOtherArgs: ToastOptions = {
+    duration: 4000,
+    progress: true,
+    position: "top-right",
+    transition: "fadeIn",
+    icon: '',
+    sound: true,
+  };
+
+  const showToastHelper = () => {
+    switch(msg?.type)
+    {
+      case "success":
+        showToast.success(msg?.text || "Success", toastOtherArgs);
+      break;
+      case "error":
+        showToast.error(msg?.text || "Error", toastOtherArgs);
+      break;
+      case "warning":
+        showToast.success(msg?.text || "Warning", toastOtherArgs);
+      break;
+      case "info":
+        showToast.success(msg?.text || "Info", toastOtherArgs);
+      break;
+      default:
+        showToast.error("Unknown Error!! try again!", toastOtherArgs);
+      break;
+    }
   }
 
   const authUser = (e: any) => {
     console.log("Submit clicked!! autheticating..");
     e.preventDefault();
-    // console.log(cred);
-    // authetication logic below...for dashboard access..
+    console.log(cred);
+
+    // #warn: this is temporary authentication for testing only...
+    if (verifyUser(cred))
+    {
+      console.log("Admin verified...");
+      setMsg(() => ({ type: "success", text: "Admin verified.."}))
+
+      localStorage.setItem("token", adminToken || "")
+      router.push('/dashboard');
+    }
+    else
+    {
+      setMsg(() => ({ type: "error", text: "Invalid Cred.."}))
+
+      console.log("Cred. don't match for admin..");
+    }
   }
+
+  useEffect(() => {
+    showToastHelper();
+  }, [msg])
+
+  useEffect(() => {
+    if (localStorage.getItem('token') == adminToken)
+    {
+      // already verified user trying to go to login page..
+      router.push("/dashboard");
+    }
+  }, [])
 
   return (
     <div className="min-h-screen flex flex-col justify-evenly items-center py-32">
