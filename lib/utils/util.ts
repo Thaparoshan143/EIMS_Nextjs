@@ -9,13 +9,7 @@ export const verifyUser = (cred: { user: string, password: string} ) => {
     // if failed to load the .env file for verifying user.. throw some informations..
     if (!adminUser && !adminPassword)
     {
-        console.error("couldn't find the admin cred from .env file. Is file missing?");
-        console.info('\
-                \nUsage: Create .env file in project with at least following variables defined!!\
-                \nNEXT_PUBLIC_ADMIN_CRED_USER="userhere.."\
-                \nNEXT_PUBLIC_ADMIN_CRED_PASSWORD="passwordhere..."\
-                \nNEXT_PUBLIC_ADMIN_CRED_TOKEN="tokenhere..."\
-                ');
+        showNoEnvCred();
         return false;
     }
     // actual password..
@@ -25,4 +19,16 @@ export const verifyUser = (cred: { user: string, password: string} ) => {
         return true;
 
     return false;
+}
+
+// this is helper function..
+export function showNoEnvCred()
+{
+    console.error("couldn't find the admin cred from .env file. Is file missing?");
+    console.info('\
+            \nUsage: Create .env file in project with at least following variables defined!!\
+            \nNEXT_PUBLIC_ADMIN_CRED_USER="userhere.."\
+            \nNEXT_PUBLIC_ADMIN_CRED_PASSWORD="passwordhere..."\
+            \nNEXT_PUBLIC_ADMIN_CRED_TOKEN="tokenhere..."\
+            ');
 }
