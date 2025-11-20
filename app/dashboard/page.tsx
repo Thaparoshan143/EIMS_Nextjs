@@ -1,5 +1,6 @@
 'use client'
 
+import { showNoEnvCred } from '@/lib/utils/util';
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 import { FaHandPaper } from 'react-icons/fa';
@@ -12,7 +13,12 @@ const Dashboard = () => {
 
     useEffect(() => {
         // this is temporary access logic for now.. later change auth. method..
-        if (localStorage.getItem('token') == adminToken)
+        if (!adminToken)
+        {
+          showNoEnvCred();
+        }
+
+        if (adminToken && localStorage.getItem('token') == adminToken)
         {
             console.log("User verified!! giving access");
             // other logic if any..
