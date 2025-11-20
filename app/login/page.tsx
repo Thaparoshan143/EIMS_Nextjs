@@ -89,7 +89,7 @@ export default function Login() {
   }, [msg])
 
   useEffect(() => {
-    if (localStorage.getItem('token') == adminToken)
+    if (adminToken && localStorage.getItem('token') == adminToken)
     {
       // already verified user trying to go to login page..
       router.push("/dashboard");
