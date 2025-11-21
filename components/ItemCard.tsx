@@ -1,12 +1,10 @@
+// This is specific to the menuItem..
 import React from 'react'
 import Card from './Card'
+import { IMenuItem } from '@/app/menu/page'
 
-export interface IItemProps {
-    id?: number,
-    name: string,
-    imgPath: string,  // or maybe url..?
-    price: number,
-    quantity: number,
+interface IItemProps extends IMenuItem {
+
 };
 
 const ItemElements = ( { name, imgPath, price, quantity }: IItemProps ) => {

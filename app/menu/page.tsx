@@ -1,17 +1,19 @@
 'use client'
 
-import ItemCard from "@/components/ItemCard";
+import { ItemCard } from "@/components/ItemCard";
 import Loading from "@/components/Loading";
 import PageConstruction from "@/components/PageConstruction";
 import { getRandomFoodItems } from "@/lib/data/_foodItems";
+import { cFetch } from "@/lib/utils/fetch";
 import { useEffect, useState } from "react";
 
-interface IMenuItem {
+export interface IMenuItem {
+  id?: number,
   name: string,
-  imgPath: string, // or maybe url..?
+  imgPath: string,  // or maybe url..?
   price: number,
-  quantity: number
-};
+  quantity: number,
+}
 
 export default function Menu() {
 
@@ -19,24 +21,12 @@ export default function Menu() {
   const fetchURL = process.env.NEXT_PUBLIC_MENU_FETCH_URL;
 
   async function fetchMenuItems() {
-
-    try {
-        const res = await fetch(fetchURL || "");
-
-        if (!res.ok) {
-          setMenuItems(getRandomFoodItems());
-          console.error("Failed to fetch data!! rolling to fallback.." + res.status);
-          return;
-        }
-
-        const data = await res.json();
-
-        console.log(data);
-        setMenuItems(data);
-
-    } catch (error) {
+    const items = await cFetch(fetchURL || "");
+    if (items) {
+      setMenuItems(items);
+    }
+    else {
       setMenuItems(getRandomFoodItems());
-      console.error(error);
     }
   }
 
