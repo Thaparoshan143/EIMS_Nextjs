@@ -1,9 +1,10 @@
 import React from 'react'
 import Card from './Card'
 
-interface IItemProps {
+export interface IItemProps {
+    id?: number,
     name: string,
-    imgPath: string,
+    imgPath: string,  // or maybe url..?
     price: number,
     quantity: number,
 };
@@ -25,12 +26,10 @@ const ItemElements = ( { name, imgPath, price, quantity }: IItemProps ) => {
     )
 }
 
-const ItemCard = ( props : IItemProps ) => {
+export const ItemCard = ( props : IItemProps ) => {
   return (
     <Card 
         props={<ItemElements {...props} />}
     />
   )
 }
-
-export default ItemCard
