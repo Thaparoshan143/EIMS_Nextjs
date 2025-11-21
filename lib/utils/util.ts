@@ -21,6 +21,24 @@ export const verifyUser = (cred: { user: string, password: string} ) => {
     return false;
 }
 
+/**
+ * Helper wrapper function used to validate the user login with token check..
+*/
+ export const isValidAccess = () => {
+    const adminToken = process.env.NEXT_PUBLIC_ADMIN_CRED_TOKEN;
+
+    if (!adminToken) {
+        showNoEnvCred();
+        return false;
+    }
+
+    if (localStorage.getItem('token') == adminToken) {
+        return true;
+    }
+
+    return false;
+}
+
 // this is helper function..
 export function showNoEnvCred()
 {

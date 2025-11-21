@@ -1,6 +1,6 @@
 'use client'
 
-import { showNoEnvCred } from '@/lib/utils/util';
+import { isValidAccess } from '@/lib/utils/util';
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 import { FaHandPaper } from 'react-icons/fa';
@@ -8,17 +8,8 @@ import { FaHandPaper } from 'react-icons/fa';
 const Dashboard = () => {
 
     const router = useRouter();
-    // this is for temporary usage..
-    const adminToken = process.env.NEXT_PUBLIC_ADMIN_CRED_TOKEN;
-
     useEffect(() => {
-        // this is temporary access logic for now.. later change auth. method..
-        if (!adminToken)
-        {
-          showNoEnvCred();
-        }
-
-        if (adminToken && localStorage.getItem('token') == adminToken)
+        if (isValidAccess())
         {
             console.log("User verified!! giving access");
             // other logic if any..

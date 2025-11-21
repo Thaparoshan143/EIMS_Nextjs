@@ -1,7 +1,7 @@
 'use client'
 
 import ThemeButton from "@/components/ThemeButton";
-import { verifyUser } from "@/lib/utils/util";
+import { isValidAccess, verifyUser } from "@/lib/utils/util";
 import { useRouter } from "next/navigation";
 import { showToast, ToastOptions } from "nextjs-toast-notify";
 import { useEffect, useState } from "react";
@@ -89,7 +89,7 @@ export default function Login() {
   }, [msg])
 
   useEffect(() => {
-    if (adminToken && localStorage.getItem('token') == adminToken)
+    if (isValidAccess())
     {
       // already verified user trying to go to login page..
       router.push("/dashboard");
