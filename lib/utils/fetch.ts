@@ -36,15 +36,43 @@ export const cFetch = cGet;
  */
 export const cPost = async (url: string, data: any) => {
     
-    console.log("In the post method: rec");
-    console.log(typeof data);
-    console.log(data);
     try {
         const res = await axiosIns.post(url, data);
 
         return await res.data;
     } catch (error) {
-        console.log("Idk error here in frontend forward");
+        console.error(error);
+        return null;
+    }
+}
+
+/**
+ * Custom PUT request wrapper from urls (Axios based)..
+ * args: url (with keypair, eg: ?id=1), data (put object)
+ */
+export const cPut = async (url: string, data: any) => {
+    
+    try {
+        const res = await axiosIns.put(url, data);
+
+        return await res.data;
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+}
+
+/**
+ * Custom DELETE request wrapper from urls (Axios based)..
+ * args: url (with keypair, eg: ?id=1)
+ */
+export const cDelete = async (url: string) => {
+    
+    try {
+        const res = await axiosIns.delete(url);
+
+        return await res.data;
+    } catch (error) {
         console.error(error);
         return null;
     }
