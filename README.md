@@ -1,36 +1,98 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Event Item Management System (EIMS)
+This is Next.js project for managing the food/inventory items for event. (more specifically food items..).
 
-## Getting Started
+> [!WARNING]
+> Make sure your system have node ([official](https://nodejs.org/en), [brew](https://formulae.brew.sh/formula/node)).
 
-First, run the development server:
+<hr />
 
+### How to use
+1. Clone the repo
 ```bash
+git clone -b main https://github.com/Thaparoshan143/EIMS_Nextjs
+```
+2. Install packages
+```bash
+npm i 
+```
+3. Run dev server
+```bash 
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+> [!WARNING]
+> Make sure the .env file is there with required credentials populated.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+example of `.env` file
+```
+NEXT_PUBLIC_ADMIN_CRED_USER="user_here"
+NEXT_PUBLIC_ADMIN_CRED_PASSWORD="password_here"
+NEXT_PUBLIC_ADMIN_CRED_TOKEN="your_token"
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+NEXT_PUBLIC_MENU_FETCH_URL="/api/menu/"
+NEXT_PUBLIC_DB_URL="source_to_postgresql_hosted_somewhere" 
+```
 
-## Learn More
+> [!Note]
+> For the DB URL, postgresql was hosted on [render](https://render.com/) during development\
+> It provides 30 days hosting for free tier. 
 
-To learn more about Next.js, take a look at the following resources:
+<hr />
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+**Major Packages used**
+- axios
+- pg
+- nextjs-toast-notify
+- refer to `packages.json` for more details..
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### For now only endpoint is `/api/menu` with following methods
+|Method|Params|Return|
+|------|------|------|
+|GET|-|object|
+|POST|object|object|
+|PUT|id, object|object|
+|DELETE|id|object|
 
-## Deploy on Vercel
+<hr />
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Postgresql was used in development
+**For menu schema is as:**
+```
+id SERIAL PRIMARY KEY,
+name VARCHAR(100) NOT NULL,
+imgpath VARCHAR(500),
+price DECIMAL(10, 2) CHECK(price > 0),
+quantity INT CHECK(quantity > 0)
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+> [!IMPORTANT]
+> Make sure that the table is created during first start.
+
+<hr />
+
+**Some Highlights**
+- **Menu**
+![MENU](./lib/assets/Menu.png)
+- **Menu (Loading/Fetching from DB)**
+<img alt="MENULOADING" src="./lib/assets/MenuLoading.png" width="50%">
+
+- **Login**
+![LOGIN](./lib/assets/Login.png)
+ 
+ > [!NOTE]
+ > Admin access (or login) required for dashboard and different operation like add, update, delete of entries
+
+ - **Dashboard**
+ ![DASHBOARD](./lib/assets/Dashboard.png)
+
+ - **Add Item (Form)**
+ ![ADDITEMFORM](./lib/assets/AddItem.png)
+
+ - **Update Item (Form)**
+ ![UPDATEITEMFORM](./lib/assets/UpdateItem.png)
+
+ - **Delete Item (Form)**
+ ![DELETEITEMFORM](./lib/assets/DeleteItem.png)
+
+ - **After Add, Update & Delete Item (Final updated table)**
+ ![ITEMDELETED](./lib/assets/AfterDeleteItem.png)
