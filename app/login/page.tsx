@@ -1,9 +1,8 @@
 'use client'
 
 import ThemeButton from "@/components/ThemeButton";
-import { isValidAccess, verifyUser } from "@/lib/utils/util";
+import { isValidAccess, IToastMsg, showToastHelper, verifyUser } from "@/lib/utils/util";
 import { useRouter } from "next/navigation";
-import { showToast, ToastOptions } from "nextjs-toast-notify";
 import { useEffect, useState } from "react";
 
 interface IUserCred {
@@ -11,17 +10,14 @@ interface IUserCred {
   password: string
 };
 
-interface ILoginMsg
-{
-  type: "error" | "info" | "success" | "warning",
-  text?: string,
+interface ILoginMsg extends IToastMsg {
 };
 
 export default function Login() {
 
   const [cred, setCred] = useState<IUserCred>({ user: '', password: '' });
   const router = useRouter();
-  const [msg, setMsg] = useState<ILoginMsg>(); // this is toast message..
+  const [msg, setMsg] = useState<ILoginMsg>({text:'Enter cred. to login', type: "info"}); // this is toast message..
   let adminToken = process.env.NEXT_PUBLIC_ADMIN_CRED_TOKEN;
 
   const setUser = (val: string) => {
@@ -32,35 +28,6 @@ export default function Login() {
     setCred((prev) => ({...prev, password: val}))
   }
 
-  const toastOtherArgs: ToastOptions = {
-    duration: 4000,
-    progress: true,
-    position: "top-right",
-    transition: "fadeIn",
-    icon: '',
-    sound: true,
-  };
-
-  const showToastHelper = () => {
-    switch(msg?.type)
-    {
-      case "success":
-        showToast.success(msg?.text || "Success", toastOtherArgs);
-      break;
-      case "error":
-        showToast.error(msg?.text || "Error", toastOtherArgs);
-      break;
-      case "warning":
-        showToast.success(msg?.text || "Warning", toastOtherArgs);
-      break;
-      case "info":
-        showToast.success(msg?.text || "Info", toastOtherArgs);
-      break;
-      default:
-        showToast.error("Unknown Error!! try again!", toastOtherArgs);
-      break;
-    }
-  }
 
   const authUser = (e: any) => {
     console.log("Submit clicked!! autheticating..");
@@ -85,7 +52,7 @@ export default function Login() {
   }
 
   useEffect(() => {
-    showToastHelper();
+    showToastHelper(msg);
   }, [msg])
 
   useEffect(() => {
