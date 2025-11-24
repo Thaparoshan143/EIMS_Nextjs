@@ -1,22 +1,48 @@
 'use client'
 
-import { isValidAccess } from '@/lib/utils/util';
+import { isValidAccess, showToastHelper } from '@/lib/utils/util';
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { cFetch } from '@/lib/utils/fetch';
+import { cGet, cPost } from '@/lib/utils/fetch';
 import Table from '@/components/Table';
 import Loading from '@/components/Loading';
 import { IMenuItem } from '../menu/page';
+import ThemeButton from '@/components/ThemeButton';
+import AddItemForm from '@/components/AddItemForm';
 
 const Dashboard = () => {
 
   const [menuItems, setMenuItems] = useState<IMenuItem[]>();
+  const [formPopup, setFormPopup] = useState<boolean>(false);
+  
   const fetchURL = process.env.NEXT_PUBLIC_MENU_FETCH_URL;
 
   const fetchMenuItems = async () => {
-    const items = await cFetch(fetchURL || "");
+    const items = await cGet(fetchURL || "");
     if (items) {
       setMenuItems(items);
+    }
+    else {
+      // console.log(items);
+      showToastHelper({text: "Error connecting. Try again!", type:"error"});
+    }
+  }
+
+
+  const addMenuItem = async (obj: IMenuItem) => {
+    if (!obj.imgPath || !obj.name || !obj.price || !obj.quantity) {
+      showToastHelper({text: "Form incomplete", type: "error"});
+    }
+    else {
+      // submit to database and refetch..
+      setFormPopup(false);
+      showToastHelper({text: "Updating the DB entry", type: "info"});
+
+      const item = await cPost(fetchURL || '', obj);
+      if (item) {
+        console.log("From post req: recieved message");
+        setMenuItems(item);
+      }
     }
   }
 
@@ -41,7 +67,6 @@ const Dashboard = () => {
       <div className="text-center">
         <h1 className="text-6xl font-main text-theme font-bold ">Dashboard</h1>
         <span className="p-2 font-thin">Welcome! user</span>
-        {/* <FaHandPaper size={64} className='text-theme m-auto my-10 animate-bounce' /> */}
       </div>
       {/* table show */}
       <div className="min-w-[80vw]">
@@ -56,8 +81,21 @@ const Dashboard = () => {
       {
         !menuItems && <Loading text="Loading Menu..." />
       }
+
+      <div>
+        <ThemeButton label="Add Item" type="button" clickEvent={() => setFormPopup(true)} />
+      </div>
+
+      {/* Add Element popup container */}
+      {
+        formPopup && <div className="fixed z-50 bg-[#0008] w-screen h-screen flex justify-center items-center">
+          <AddItemForm onFormSubmit={(obj) => addMenuItem(obj)} onFormClose={() => setFormPopup(false)} />
+        </div>
+      }
     </div>
   )
 }
+
+
 
 export default Dashboard
