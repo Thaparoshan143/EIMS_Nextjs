@@ -10,7 +10,7 @@ import { useEffect, useState } from "react";
 export interface IMenuItem {
   id?: number,
   name: string,
-  imgPath: string,  // or maybe url..?
+  imgpath: string,  // or maybe url..?
   price: number,
   quantity: number,
 }

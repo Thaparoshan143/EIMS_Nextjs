@@ -76,7 +76,7 @@ const createTable = () => {
     firstTableConstruct('menu', `
                 id SERIAL PRIMARY KEY,
                 name VARCHAR(100) NOT NULL,
-                imgPath VARCHAR(500),
+                imgpath VARCHAR(500),
                 price DECIMAL(10, 2) CHECK(price > 0),
                 quantity INT CHECK(quantity > 0)
                 `)
