@@ -1,4 +1,4 @@
-import { firstTableConstruct, getLastRecordId, getRecords, insertRecord } from '@/lib/utils/dbquery';
+import { deleteRecord, firstTableConstruct, getLastRecordId, getRecords, insertRecord, updateRecord } from '@/lib/utils/dbquery';
 import { NextRequest, NextResponse } from 'next/server';
  
 export async function GET(req: NextRequest) {
@@ -24,6 +24,47 @@ export async function POST(req: NextRequest) {
         const updatedRec = await insertRecord('menu', {id: prevId+1, ...reqEles});
 
         return NextResponse.json(updatedRec, { status: 200 });
+    } catch (error) {
+        console.error(error);
+        return NextResponse.json(error, { status: 404 });
+    }
+}
+
+export async function PUT(req: NextRequest) {
+    try {
+        const reqId = await req.nextUrl.searchParams.get('id');
+        console.log("update the id: " + reqId);
+
+        if (!reqId) {
+            return NextResponse.json({message: "error: id param missing!"}, { status : 404 });
+        }
+        else {
+            const reqEles = await req.json();
+
+            const updatedRec = await updateRecord('menu', reqEles, Number(reqId));
+            
+            return NextResponse.json(updatedRec, { status: 200 });
+        }
+    } catch (error) {
+        console.error(error);
+        return NextResponse.json(error, { status: 404 });
+    }
+}
+
+export async function DELETE(req: NextRequest) {
+    try {
+        const reqId = await req.nextUrl.searchParams.get('id');
+        console.log("delete request id is: " + reqId);
+
+        if (!reqId) {
+            return NextResponse.json({message: "error: id param missing!"}, { status : 404 });
+        }
+        else {
+            const updatedRec = await deleteRecord('menu', Number(reqId));
+    
+            return NextResponse.json(updatedRec, { status: 200 });
+        }
+
     } catch (error) {
         console.error(error);
         return NextResponse.json(error, { status: 404 });
