@@ -50,3 +50,45 @@ export function showNoEnvCred()
             \nNEXT_PUBLIC_ADMIN_CRED_TOKEN="tokenhere..."\
             ');
 }
+
+// toast helpers
+import { showToast, ToastOptions } from "nextjs-toast-notify";
+
+export interface IToastMsg {
+  type: "error" | "info" | "success" | "warning" | "none",
+  text?: string,
+};
+
+// other global toast args..
+const toastOtherGloArgs: ToastOptions = {
+    duration: 4000,
+    progress: true,
+    position: "bottom-center",
+    transition: "fadeIn",
+    icon: '',
+    sound: false,
+};
+
+export function showToastHelper(msg: IToastMsg) {
+    switch(msg?.type)
+    {
+        case "success":
+            showToast.success(msg?.text || "Success", toastOtherGloArgs);
+        break;
+        case "error":
+            showToast.error(msg?.text || "Error", toastOtherGloArgs);
+        break;
+        case "warning":
+            showToast.success(msg?.text || "Warning", toastOtherGloArgs);
+        break;
+        case "info":
+            showToast.success(msg?.text || "Info", toastOtherGloArgs);
+        break;
+        case "none":
+            // if anything other to be done..
+        break;  
+        default:
+            showToast.error("Unknown Error!! try again!", toastOtherGloArgs);
+        break;
+    }
+} 
