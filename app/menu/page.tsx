@@ -4,7 +4,7 @@ import { ItemCard } from "@/components/ItemCard";
 import Loading from "@/components/Loading";
 import PageConstruction from "@/components/PageConstruction";
 import { getRandomFoodItems } from "@/lib/data/_foodItems";
-import { cFetch } from "@/lib/utils/fetch";
+import { cGet } from "@/lib/utils/fetch";
 import { useEffect, useState } from "react";
 
 export interface IMenuItem {
@@ -21,7 +21,7 @@ export default function Menu() {
   const fetchURL = process.env.NEXT_PUBLIC_MENU_FETCH_URL;
 
   async function fetchMenuItems() {
-    const items = await cFetch(fetchURL || "");
+    const items = await cGet(fetchURL || "");
     if (items) {
       setMenuItems(items);
     }
