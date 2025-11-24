@@ -3,17 +3,26 @@
 import { isValidAccess, showToastHelper } from '@/lib/utils/util';
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { cGet, cPost } from '@/lib/utils/fetch';
+import { cDelete, cGet, cPost, cPut } from '@/lib/utils/fetch';
 import Table from '@/components/Table';
 import Loading from '@/components/Loading';
 import { IMenuItem } from '../menu/page';
 import ThemeButton from '@/components/ThemeButton';
 import AddItemForm from '@/components/AddItemForm';
+import ItemForm from '@/components/ItemForm';
+import { RiDeleteBin5Fill } from 'react-icons/ri';
+
+enum FormState {
+  NONE,
+  ADD,
+  UPDATE,
+};
 
 const Dashboard = () => {
 
   const [menuItems, setMenuItems] = useState<IMenuItem[]>();
-  const [formPopup, setFormPopup] = useState<boolean>(false);
+  const [formPopup, setFormPopup] = useState<FormState>(FormState.NONE);
+  const [selectId, setSelectId] = useState<number>(-1);
   
   const fetchURL = process.env.NEXT_PUBLIC_MENU_FETCH_URL;
 
@@ -21,6 +30,7 @@ const Dashboard = () => {
     const items = await cGet(fetchURL || "");
     if (items) {
       setMenuItems(items);
+      // console.log(items);
     }
     else {
       // console.log(items);
@@ -30,12 +40,12 @@ const Dashboard = () => {
 
 
   const addMenuItem = async (obj: IMenuItem) => {
-    if (!obj.imgPath || !obj.name || !obj.price || !obj.quantity) {
+    if (!obj.imgpath || !obj.name || !obj.price || !obj.quantity) {
       showToastHelper({text: "Form incomplete", type: "error"});
     }
     else {
       // submit to database and refetch..
-      setFormPopup(false);
+      setFormPopup(FormState.NONE);
       showToastHelper({text: "Updating the DB entry", type: "info"});
 
       const item = await cPost(fetchURL || '', obj);
@@ -44,6 +54,48 @@ const Dashboard = () => {
         setMenuItems(item);
       }
     }
+  }
+
+  const updateMenuItem = async (obj: IMenuItem) => {
+    console.log("Upading of id: " + obj.id);
+    console.log(obj);
+    
+    if (!obj.imgpath || !obj.name || !obj.price || !obj.quantity) {
+      showToastHelper({text: "Form incomplete", type: "error"});
+    }
+    else {
+      // submit to update to database and refetch..
+      setFormPopup(FormState.NONE);
+      showToastHelper({text: "Updating the DB entry", type: "info"});
+
+      const res = await cPut(`${fetchURL}?id=${obj.id}` || '', obj);
+      if (res) {
+        console.log("From put req: recieved message");
+        setMenuItems(res);
+      }
+    }
+  }
+
+  const deleteMenuItem = async (id: number) => {
+    console.log("deleting the record id: " + id);
+    setFormPopup(FormState.NONE);
+
+    if (id == 0) {
+      console.log("No entry selected!!!");
+    }
+
+    const res = await cDelete(`${fetchURL}?id=${id}` || '');
+    if (res) {
+      console.log("From delete req: recieved message");
+      setMenuItems(res);
+    }
+  }
+
+  const recordFormPopup = (id: number) => {
+    showToastHelper({text: "Update the record", type: "info"});
+    setSelectId(id);
+    setFormPopup(FormState.UPDATE);
+    // console.log(menuItems?.filter((props) => props.id == id)[0]);
   }
 
   const router = useRouter();
@@ -73,8 +125,9 @@ const Dashboard = () => {
         <span className="font-bold block mb-2">Currently, available in menu</span>
         {
           menuItems && <Table 
-          titles={["SN", "Name", "ImgPath", "Price", "Quantity"]} 
+          titles={["ID", "Name", "imgpath", "Price", "Quantity"]} 
           records={menuItems}
+          onRecordClick={(id) => recordFormPopup(id)}
         />
         }
       </div>
@@ -83,13 +136,36 @@ const Dashboard = () => {
       }
 
       <div>
-        <ThemeButton label="Add Item" type="button" clickEvent={() => setFormPopup(true)} />
+        <ThemeButton label="Add Item" type="button" clickEvent={() => setFormPopup(FormState.ADD)} />
       </div>
 
       {/* Add Element popup container */}
       {
-        formPopup && <div className="fixed z-50 bg-[#0008] w-screen h-screen flex justify-center items-center">
-          <AddItemForm onFormSubmit={(obj) => addMenuItem(obj)} onFormClose={() => setFormPopup(false)} />
+        formPopup != FormState.NONE &&
+        <div className="fixed z-50 bg-[#0008] w-screen h-screen flex justify-center items-center">
+          {
+            formPopup == FormState.ADD ? 
+              <AddItemForm 
+                onFormSubmit={(obj) => addMenuItem(obj)} 
+                onFormClose={() => setFormPopup(FormState.NONE)} 
+              />
+              : formPopup == FormState.UPDATE ?
+              <div className="relative">
+                <ItemForm
+                  btnLabel="Update"
+                  iniState={menuItems && menuItems?.filter((props) => props.id == selectId)[0]}
+                  onFormSubmit={(obj) => updateMenuItem(obj)} 
+                  onFormClose={() => setFormPopup(FormState.NONE)} 
+                />
+
+                <RiDeleteBin5Fill 
+                  className="absolute top-1.5 left-1.5 cursor-pointer text-theme-alt hover:text-theme-w hover:bg-theme-alt text-3xl hover:scale-110 p-0.5 rounded-sm transition-all duration-300"
+                  onClick={() => deleteMenuItem(selectId)}
+                />
+              </div>
+              : 
+              <></>
+          }
         </div>
       }
     </div>
