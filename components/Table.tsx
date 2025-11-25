@@ -52,7 +52,7 @@ const TableRecord = ({rowObj, onRowClick}: {rowObj: Object, onRowClick?: (id: nu
 
 const TableData = ({data}: {data: string | number}) => {
   return (
-    <td className="text-xl">
+    <td className="text-xl max-w-32 overflow-hidden truncate">
       {data}
     </td>
   )
