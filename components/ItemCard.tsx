@@ -11,7 +11,7 @@ const ItemElements = ( { name, imgpath, price, quantity }: IItemProps ) => {
     return (
         <div className="flex flex-col justify-evenly items-center min-w-64 min-h-32 gap-2">
             <h1 className="font-bold text-xl text-theme">{name}</h1>
-            <img src={imgpath} alt={name} className="min-w-32 min-h-32"/>
+            <img src={imgpath} alt={name} className="min-w-32 min-h-32 max-w-64 max-h-64"/>
             <div>
                 <span className="font-semibold">Price: </span>
                 <span>{price}</span>
