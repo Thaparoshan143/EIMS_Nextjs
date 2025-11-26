@@ -6,6 +6,8 @@ import { _fetchMenuItems, showToastHelper } from '@/lib/utils/util';
 import ThemeButton from '@/components/ThemeButton';
 import POSTable from '@/components/POSTable';
 import SearchTable from '@/components/SearchTable';
+import Link from 'next/link';
+import { MdSpaceDashboard } from 'react-icons/md';
 
 interface ITransactionInfo {
   id: number,
@@ -157,6 +159,10 @@ const POS = () => {
 
   return (
     <div className="w-screen min-h-screen flex flex-col justify-evenly items-center py-20">
+      {/* <Link href="/dashboard" className="absolute top-16 left-4 bg-theme-cont text-theme-w p-2 px-4 text-xl">Dashboard</Link> */}
+      <Link href="/dashboard" className="fixed z-50 top-20 left-10 text-xl bg-theme-cont p-2 px-4 gap-2 rounded-xl text-theme-w hover:shadow-md hover:bg-theme-cont-alt hover:scale-[102%] transition-all duration-300">
+        <span className="font-semibold mr-2">Dashboard</span><MdSpaceDashboard className="inline-block " />
+      </Link>
       <h1 className="text-3xl text-theme-cont font-extrabold uppercase">Point of Sale (POS)</h1>
       
       <div className="max-w-[90%] xl:min-w-6xl p-8 bg-theme-w-alt rounded-md shadow-md">
