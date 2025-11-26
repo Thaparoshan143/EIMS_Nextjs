@@ -9,7 +9,7 @@ interface ITableProps {
 
 const Table = (props: ITableProps) => {
   return (
-    <table className={`w-full text-left table-auto border rounded-md bg-theme-w-alt border-gray-500 border-separate border-spacing-4 ${props.oClassName}`}>
+    <table className={`w-full text-left text-md table-auto border rounded-md bg-theme-w-alt border-gray-500 border-separate border-spacing-4 ${props.oClassName}`}>
       <thead className="text-theme">
         <tr>
         {
@@ -32,7 +32,7 @@ const Table = (props: ITableProps) => {
 
 const TableHead = ({text} : {text: string}) => {
   return (
-    <th className="text-xl font-bold">
+    <th className="font-bold">
       {text}
     </th>
   )
@@ -52,7 +52,7 @@ const TableRecord = ({rowObj, onRowClick}: {rowObj: Object, onRowClick?: (id: nu
 
 const TableData = ({data}: {data: string | number}) => {
   return (
-    <td className="text-xl max-w-32 overflow-hidden truncate">
+    <td className="max-w-32 overflow-hidden truncate">
       {data}
     </td>
   )
