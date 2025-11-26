@@ -92,3 +92,26 @@ export function showToastHelper(msg: IToastMsg) {
         break;
     }
 } 
+
+// helper function and utils for ease..
+import { cGet } from "./fetch";
+import { getRandomFoodItems } from "../data/_foodItems";
+
+const fetchURL = process.env.NEXT_PUBLIC_MENU_FETCH_URL;
+
+/**
+ * Helper function to fetch all the menu item from database
+ * args: setter (usestate) function 
+ * on success, it will call the setter function
+ */
+export const _fetchMenuItems = async (menuItemSetter: (items: any) => void) => {
+    const items = await cGet(fetchURL || '');
+
+    if (items) {
+        menuItemSetter(items);
+    }
+    else {
+        showToastHelper({text: "Error fetching menu items. Try again!", type:"error"});
+        menuItemSetter((_: any) => getRandomFoodItems()); // instead of this you can directly pass callback, but since the setter pass items as args so..
+    }
+}
