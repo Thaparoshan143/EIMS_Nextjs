@@ -1,6 +1,6 @@
 'use client'
 
-import { isValidAccess, showToastHelper } from '@/lib/utils/util';
+import { _fetchMenuItems, isValidAccess, showToastHelper } from '@/lib/utils/util';
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { cDelete, cGet, cPost, cPut } from '@/lib/utils/fetch';
@@ -27,18 +27,6 @@ const Dashboard = () => {
   const [selectId, setSelectId] = useState<number>(-1);
   
   const fetchURL = process.env.NEXT_PUBLIC_MENU_FETCH_URL;
-
-  const fetchMenuItems = async () => {
-    const items = await cGet(fetchURL || "");
-    if (items) {
-      setMenuItems(items);
-      // console.log(items);
-    }
-    else {
-      // console.log(items);
-      showToastHelper({text: "Error connecting. Try again!", type:"error"});
-    }
-  }
 
 
   const addMenuItem = async (obj: IMenuItem) => {
@@ -106,7 +94,7 @@ const Dashboard = () => {
       {
           console.log("User verified!! giving access");
           // other logic if any..
-          fetchMenuItems();
+          _fetchMenuItems(setMenuItems);
         }
       else
       {

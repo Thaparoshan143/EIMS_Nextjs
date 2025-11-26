@@ -2,15 +2,13 @@
 
 import { ItemCard } from "@/components/ItemCard";
 import Loading from "@/components/Loading";
-import PageConstruction from "@/components/PageConstruction";
-import { getRandomFoodItems } from "@/lib/data/_foodItems";
-import { cGet } from "@/lib/utils/fetch";
+import { _fetchMenuItems } from "@/lib/utils/util";
 import { useEffect, useState } from "react";
 
 export interface IMenuItem {
   id?: number,
   name: string,
-  imgpath: string,  // or maybe url..?
+  imgpath?: string,  // or maybe url..?
   price: number,
   quantity: number,
 }
@@ -18,30 +16,9 @@ export interface IMenuItem {
 export default function Menu() {
 
   const [menuItems, setMenuItems] = useState<IMenuItem[]>();
-  const fetchURL = process.env.NEXT_PUBLIC_MENU_FETCH_URL;
-
-  async function fetchMenuItems() {
-    const items = await cGet(fetchURL || "");
-    if (items) {
-      setMenuItems(items);
-    }
-    else {
-      setMenuItems(getRandomFoodItems());
-    }
-  }
-
 
   useEffect(() => {
-    // console.log(fetchURL);
-
-    if (!fetchURL) {
-      console.log("Unable to retrieve fetch url from .env file");
-      setMenuItems(getRandomFoodItems());
-      // return; // required ? or default to fallback methods..
-    }
-    else {
-      fetchMenuItems();
-    }
+      _fetchMenuItems(setMenuItems);
   }, [])
 
   return (
@@ -58,7 +35,6 @@ export default function Menu() {
           !menuItems && <Loading text="Loading Menu..." />
         }
         <span className="text-theme-alt my-16"><span className="text-2xl font-semibold">Other Items</span> comming soon!!!</span>
-        {/* <PageConstruction /> */}
     </div>
   );
 }
