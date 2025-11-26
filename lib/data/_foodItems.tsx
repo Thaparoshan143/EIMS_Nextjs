@@ -35,16 +35,17 @@ export function getRandChar(charCount: number)
 }
 
 // expected to be used in case of fallback..
-export function getRandomFoodItems() {
-    const arr = getArray(_randFoodItemsCount)
-    let name, imgpath, price, quantity;
+export function getRandomFoodItems(count: number = _randFoodItemsCount) {
+    const arr = getArray(count)
+    let id, name, imgpath, price, quantity;
 
     return arr.map((num) => {
+        id = num;
         name = getRandChar(10);
         imgpath = "https://www.eatthis.com/wp-content/uploads/sites/4/2024/07/Copy-of-MULTIPLE-PRODUCTS-TEMPLATE.jpg?quality=82&strip=all";
         price = getRandInt(50, 500);
         quantity = getRandInt(5, 100);
 
-        return { name, imgpath, price, quantity };
+        return { id, name, imgpath, price, quantity };
     })
 }
