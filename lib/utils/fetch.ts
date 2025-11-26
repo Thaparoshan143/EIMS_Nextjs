@@ -14,6 +14,10 @@ const axiosIns = axios.create({
 export const cGet = async (url: string) => {
     
     try {
+        if (url == '') {
+            console.error("URL is blank!!");
+            return null;
+        }
         const res = await axiosIns.get(url);
 
         const data = await res.data;
@@ -37,6 +41,10 @@ export const cFetch = cGet;
 export const cPost = async (url: string, data: any) => {
     
     try {
+        if (url == '' || !data) {
+            console.error("Either URL is blank or data not passed");
+            return null;
+        }
         const res = await axiosIns.post(url, data);
 
         return await res.data;
@@ -53,6 +61,10 @@ export const cPost = async (url: string, data: any) => {
 export const cPut = async (url: string, data: any) => {
     
     try {
+        if (url == '' || !data) {
+            console.error("Either URL is blank or data not passed");
+            return null;
+        }
         const res = await axiosIns.put(url, data);
 
         return await res.data;
@@ -69,6 +81,11 @@ export const cPut = async (url: string, data: any) => {
 export const cDelete = async (url: string) => {
     
     try {
+        if (url == '') {
+            console.error("URL is blank!!");
+            return null;
+        }
+
         const res = await axiosIns.delete(url);
 
         return await res.data;
