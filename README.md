@@ -30,7 +30,8 @@ NEXT_PUBLIC_ADMIN_CRED_PASSWORD="password_here"
 NEXT_PUBLIC_ADMIN_CRED_TOKEN="your_token"
 
 NEXT_PUBLIC_MENU_FETCH_URL="/api/menu/"
-NEXT_PUBLIC_DB_URL="source_to_postgresql_hosted_somewhere" 
+NEXT_PUBLIC_PGDB_URL="source_to_postgresql_hosted_somewhere" 
+NEXT_PUBLIC_MONGODB_URI="source_to_mongodb_uri" 
 ```
 
 > [!Note]
@@ -42,6 +43,7 @@ NEXT_PUBLIC_DB_URL="source_to_postgresql_hosted_somewhere"
 **Major Packages used**
 - axios
 - pg
+- mongodb
 - nextjs-toast-notify
 - refer to `packages.json` for more details..
 

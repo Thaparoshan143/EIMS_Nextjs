@@ -1,7 +1,7 @@
 import { Pool } from 'pg';
 
 const pool = new Pool({
-    connectionString: process.env.NEXT_PUBLIC_DB_URL,
+    connectionString: process.env.NEXT_PUBLIC_PGDB_URL,
     ssl: {
         rejectUnauthorized: false,
     },
