@@ -130,7 +130,7 @@ const Dashboard = () => {
       </div>
 
       {/* for POS link */}
-      <Link href="/pos" className="fixed z-50 bottom-10 right-10 text-xl bg-theme-cont p-2 px-4 gap-2 rounded-xl text-theme-w hover:shadow-xl hover:bg-theme-cont-alt hover:scale-[105%] transition-all duration-300">
+      <Link href="/pos" className="fixed z-50 bottom-10 right-10 text-md bg-theme-cont p-2 px-4 gap-2 rounded-xl text-theme-w hover:shadow-xl hover:bg-theme-cont-alt hover:scale-[105%] transition-all duration-300">
         <span className="font-semibold mr-2">Launch POS</span><MdShoppingCart className="inline-block " />
       </Link>
 

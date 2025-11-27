@@ -245,10 +245,10 @@ const POS = () => {
 
   return (
     <div className="w-screen min-h-screen flex flex-col justify-evenly items-center py-20">
-      <Link href="/dashboard" className="fixed z-50 top-20 left-10 text-md bg-theme-cont p-2 px-4 gap-2 rounded-xl text-theme-w hover:shadow-md hover:bg-theme-cont-alt hover:scale-[102%] transition-all duration-300">
+      <Link href="/dashboard" className="fixed z-50 top-20 left-10 text-sm bg-theme-cont p-2 px-4 gap-2 rounded-xl text-theme-w hover:shadow-md hover:bg-theme-cont-alt hover:scale-[102%] transition-all duration-300">
         <span className="font-semibold mr-2">Dashboard</span><MdSpaceDashboard className="inline-block " />
       </Link>
-      <Link href="/pos/invoice" className="fixed z-50 top-20 right-10 text-md bg-theme-cont p-2 px-4 gap-2 rounded-xl text-theme-w hover:shadow-md hover:bg-theme-cont-alt hover:scale-[102%] transition-all duration-300">
+      <Link href="/pos/invoice" className="fixed z-50 top-20 right-10 text-sm bg-theme-cont p-2 px-4 gap-2 rounded-xl text-theme-w hover:shadow-md hover:bg-theme-cont-alt hover:scale-[102%] transition-all duration-300">
         <span className="font-semibold mr-2">Invoices</span><FaFileInvoice className="inline-block " />
       </Link>
 
