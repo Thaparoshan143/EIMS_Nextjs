@@ -62,7 +62,6 @@ const ItemForm = ({onFormSubmit, onFormClose, iniState = null, btnLabel}: IItemF
         />
       <input 
         type="text"
-        required
         className={`${formCStyle}`}
         placeholder="Enter img path/url..." 
         onChange={(e) => setItemimgpath(e.target.value)}

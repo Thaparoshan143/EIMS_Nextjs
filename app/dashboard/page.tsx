@@ -30,7 +30,7 @@ const Dashboard = () => {
 
 
   const addMenuItem = async (obj: IMenuItem) => {
-    if (!obj.imgpath || !obj.name || !obj.price || !obj.quantity) {
+    if (!obj.name || !obj.price || !obj.quantity) {
       showToastHelper({text: "Form incomplete", type: "error"});
     }
     else {
