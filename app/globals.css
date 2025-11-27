@@ -11,4 +11,7 @@
   --color-theme-w-alt: #efefef;
   --font-main: "Roboto", serif;
   --font-main-alt: "Ysabeau SC", serif;
+  --text-s: 0.85rem;
+  --text-vs: 0.75rem;
+  --text-vse9: 0.9em;
 }
