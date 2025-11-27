@@ -1,4 +1,4 @@
-import { deleteRecord, firstTableConstruct, getLastRecordId, getRecords, insertRecord, updateRecord } from '@/lib/utils/dbquery';
+import { deleteRecord, firstTableConstruct, getLastRecordId, getRecords, insertRecord, updateRecord, updateRecordM } from '@/lib/utils/dbquery';
 import { NextRequest, NextResponse } from 'next/server';
  
 export async function GET(req: NextRequest) {
@@ -33,13 +33,23 @@ export async function POST(req: NextRequest) {
 export async function PUT(req: NextRequest) {
     try {
         const reqId = await req.nextUrl.searchParams.get('id');
-        console.log("update the id: " + reqId);
+        const multipleItem = (await req.nextUrl.searchParams.get('multiple')) === "true"; // this is the case of multiple item put update, used in pos..  
+        // console.log("update the id: " + reqId);
 
-        if (!reqId) {
+        if (!reqId && !multipleItem) {
             return NextResponse.json({message: "error: id param missing!"}, { status : 404 });
         }
         else {
             const reqEles = await req.json();
+
+            if (multipleItem) {
+                
+                console.log("Multiple update recieved");
+                // return null;
+                const updatedRec = await updateRecordM('menu', reqEles);
+
+                return NextResponse.json(updatedRec, { status: 200 });
+            }
 
             const updatedRec = await updateRecord('menu', reqEles, Number(reqId));
             
@@ -78,6 +88,6 @@ const createTable = () => {
                 name VARCHAR(100) NOT NULL,
                 imgpath VARCHAR(500),
                 price DECIMAL(10, 2) CHECK(price > 0),
-                quantity INT CHECK(quantity > 0)
+                quantity INT CHECK(quantity >= 0)
                 `)
 }
