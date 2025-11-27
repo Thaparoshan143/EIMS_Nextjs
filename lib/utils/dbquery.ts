@@ -82,6 +82,34 @@ export const updateRecord = async (tableName: string, record: Object, id: number
 }
 
 /**
+ * Wrapper function to update the record given multiple entries
+ * args: tablename, record (new values), idField (title of the id)
+ * return: new updated records (i.e after updating, fresh select query..)
+ */
+export const updateRecordM = async (tableName: string, records: Object[], idField: string = 'id') => {
+    const client = await pool.connect();
+
+    if (!records.length) {
+        return null;
+    }
+
+    records.forEach(async (record) => {
+        const eles = Object.values(record);
+        const keys = Object.keys(record);
+        const keyPlaceholder = getUpdatePlaceholder(keys);
+        const id = eles[0]; // first is the id so..
+        console.log(id);
+    
+        await client.query(`UPDATE ${tableName} SET ${keyPlaceholder} WHERE ${idField} = ${id};`, eles);
+    })
+    const res = await client.query(`SELECT * FROM ${tableName};`);
+    
+    client.release();
+
+    return res.rows;
+}
+
+/**
  * Wrapper function to delete the record based on the id 
  * args: tablename, id (which id number), idField (title of the id)
  * return: new updated records (i.e after insert, fresh select query..)
