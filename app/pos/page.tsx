@@ -2,28 +2,43 @@
 
 import React, { useEffect, useState } from 'react'
 import { IMenuItem } from '../menu/page';
-import { _fetchMenuItems, showToastHelper } from '@/lib/utils/util';
+import { _fetchMenuItems, _updatePOSMenuItems, isValidAccess, showToastHelper } from '@/lib/utils/util';
 import ThemeButton from '@/components/ThemeButton';
 import POSTable from '@/components/POSTable';
 import SearchTable from '@/components/SearchTable';
 import Link from 'next/link';
 import { MdSpaceDashboard } from 'react-icons/md';
+import { useRouter } from 'next/navigation';
+import { commitTransToMongoDB, setLastTransId } from '@/lib/utils/mongodbutil';
+import { FaFileInvoice } from 'react-icons/fa';
 
-interface ITransactionInfo {
-  id: number,
+// little modified of IMenuItem version without imagepath
+export interface ITransItem {
+  id?: number,
+  name: string,
+  price: number,
+  quantity: number,
+};
+
+export interface ITransactionInfo {
+  tid: number,
   total?: number,
   discount?: number, // is in PERCENTAGE
   gTotal?: number,
-  items?: IMenuItem[]
+  items?: ITransItem[]
+  date?: string
 };
 
 const POS = () => {
   const [menuItemList, setMenuItemList] = useState<IMenuItem[]>([]);
   const [activeItemList, setActiveItemList] = useState<IMenuItem[]>([]);
   const [activeTransaction, setActiveTransaction] = useState<ITransactionInfo>({
-    id: 0
+    tid: 1,
+    items: []
   });
   const [addItemPopup, setAddItemPopup] = useState<boolean>(false);
+  // this is helper function to prevent from multiple confirm/buy
+  const [confirmable, setConfirmable] = useState<boolean>(true);
 
   const paymentOptSrc: string[] = [
     "https://yt3.googleusercontent.com/7peNpfVRa3bFg2Mt-vEdZI7O5HOuLv_HTEhgltS7oJUKZmEhxnerPTcaIqXvv9dGT9-jLx9S5A=s900-c-k-c0x00ffffff-no-rj",
@@ -38,7 +53,11 @@ const POS = () => {
     setAddItemPopup(false);
     const selectedItem = menuItemList.filter((i) => i.id == ind)[0];
     if (selectedItem) {
-      if (activeItemList.filter((i) => i.id == ind).length == 0) {
+      if (selectedItem.quantity <= 0) {
+        showToastHelper({text: `Item (${selectedItem.name}) is out of stock!!`, type: "error"});
+        return;
+      }
+      else if (activeItemList.filter((i) => i.id == ind).length == 0) {
         itemQuantityChange(ind, 1);
         // making new copy such that old values is not modified..
         const newItem = {...selectedItem};
@@ -46,19 +65,12 @@ const POS = () => {
         setActiveItemList((prev) => ([...prev, newItem]));
         showToastHelper({text: `Item (${selectedItem.name}) added!`, type: "success"})
       }
-      else if (selectedItem.quantity <= 0) {
-        showToastHelper({text: `Item (${selectedItem.name}) is out of stock!!`, type: "error"});
-      }
       else {
         showToastHelper({text: `Item (${selectedItem.name}) already added!`, type: "error"});
       }
     }
   }
 
-  // from the previous records find the last transaction id used..
-  const getLastTransId = () => {
-    return 0;
-  }
 
   const getDiscountForTotal = (t: number) => {
     if (t > 5000) {
@@ -134,9 +146,83 @@ const POS = () => {
     setActiveItemList([]);
   }
 
+  const buyActiveItems = async () => {
+
+    if (!confirmable) {
+      showToastHelper({text: "Already processing order! Please wait..", type: "error"});
+      return;
+    }
+    setConfirmable(false);
+
+    if (activeItemList.length == 0) {
+      showToastHelper({text: "No items in active list to buy!", type: "error"});
+      return;
+    }
+
+    const transObj = {...activeTransaction};
+    // transObj.total = transObj.total?.toPrecision(2);
+    const transItems: ITransItem[] = [];
+    activeItemList.forEach((item) => {
+      if (item.quantity == 0)
+        return;
+      transItems.push({
+        id: item.id,
+        name: item.name,
+        price: item.price,
+        quantity: item.quantity
+      })
+    })
+
+    transObj.items = transItems;
+    transObj.date = (new Date()).toLocaleString();
+
+    console.log(transObj);
+    const res1 = await commitTransToMongoDB(transObj);
+
+    if (res1) {
+
+      const updatableList: IMenuItem[] = [];
+      activeItemList.forEach((ai) => {
+        if (ai.quantity)
+          updatableList.push(menuItemList.filter((mi) => mi.id == ai.id)[0])
+      })
+      
+      const res2 = await _updatePOSMenuItems(updatableList);
+      if (res2) {
+        showToastHelper({text: `Tid: ${transObj.tid} succesful! || Item count: ${transObj.items?.length} || Total: ${transObj.gTotal}`, type: "success" })
+
+        setActiveTransaction((prev) => ({...prev, tid: prev.tid + 1}));
+        setActiveItemList([]);
+      }
+      else {
+        showToastHelper({text: "Error commiting the transaction changes. Try again!", type:"error"});
+      }
+
+    }
+    else {
+      showToastHelper({text: `Tid: ${transObj.tid} unsuccesful! || Item count: ${transObj.items?.length} || Total: ${transObj.gTotal} || Try again`, type: "error" })
+    }
+
+    setConfirmable(true);
+  }
+
+  const router = useRouter();
+
   useEffect(() => {
-    _fetchMenuItems(setMenuItemList);
-    setActiveTransaction({id: getLastTransId() + 1});
+
+    if (isValidAccess()) 
+    {
+      console.log("User verified!! giving access");
+      // other logic if any..
+      _fetchMenuItems(setMenuItemList);
+      setLastTransId((tid) => setActiveTransaction((prev) => ({...prev, tid: tid + 1})));
+    }
+    else
+    {
+      console.log("bad access.. first authenticate yourself..")
+      router.push('/login')
+    }
+
   }, [])
 
 
@@ -159,14 +245,17 @@ const POS = () => {
 
   return (
     <div className="w-screen min-h-screen flex flex-col justify-evenly items-center py-20">
-      {/* <Link href="/dashboard" className="absolute top-16 left-4 bg-theme-cont text-theme-w p-2 px-4 text-xl">Dashboard</Link> */}
-      <Link href="/dashboard" className="fixed z-50 top-20 left-10 text-xl bg-theme-cont p-2 px-4 gap-2 rounded-xl text-theme-w hover:shadow-md hover:bg-theme-cont-alt hover:scale-[102%] transition-all duration-300">
+      <Link href="/dashboard" className="fixed z-50 top-20 left-10 text-md bg-theme-cont p-2 px-4 gap-2 rounded-xl text-theme-w hover:shadow-md hover:bg-theme-cont-alt hover:scale-[102%] transition-all duration-300">
         <span className="font-semibold mr-2">Dashboard</span><MdSpaceDashboard className="inline-block " />
       </Link>
+      <Link href="/pos/invoice" className="fixed z-50 top-20 right-10 text-md bg-theme-cont p-2 px-4 gap-2 rounded-xl text-theme-w hover:shadow-md hover:bg-theme-cont-alt hover:scale-[102%] transition-all duration-300">
+        <span className="font-semibold mr-2">Invoices</span><FaFileInvoice className="inline-block " />
+      </Link>
+
       <h1 className="text-3xl text-theme-cont font-extrabold uppercase">Point of Sale (POS)</h1>
       
       <div className="max-w-[90%] xl:min-w-6xl p-8 bg-theme-w-alt rounded-md shadow-md">
-        <h1 className="font-bold text-xl text-theme mb-4">Active Items in List (Transaction id: {activeTransaction.id})</h1>
+        <h1 className="font-bold text-xl text-theme mb-4">Active Items in List (Transaction id: {activeTransaction.tid})</h1>
         <POSTable 
           records={activeItemList}
           oClassName="text-md"
@@ -204,8 +293,13 @@ const POS = () => {
           <div className="h-full flex flex-col justify-between items-end">
             <div className="w-full flex lg:flex-row flex-col justify-end lg:items-end items-center gap-4">
               <ThemeButton label="Clear All" clickEvent={clearActiveItems} oClassName="bg-theme-alt hover:shadow-xl" />
-              <ThemeButton label="Cancel" clickEvent={() => {alert("Cancel order")}} oClassName="bg-theme-alt hover:shadow-xl" />
-              <ThemeButton label="Confirm" clickEvent={() => {alert("Confirm/Submitted")}} oClassName="hover:bg-theme-cont" />
+              {/* <ThemeButton label="Cancel" clickEvent={() => {alert("Cancel order")}} oClassName="bg-theme-alt hover:shadow-xl" /> */}
+              {
+                confirmable ? 
+                  <ThemeButton label="Confirm" clickEvent={buyActiveItems} oClassName="hover:bg-theme-cont" />
+                  :
+                  <ThemeButton label="Processing" oClassName="opacity-50" />
+              }
             </div>
             <div>
               <ThemeButton label="Add Item +" clickEvent={() => setAddItemPopup(true)} oClassName="hover:bg-theme-cont"/>
