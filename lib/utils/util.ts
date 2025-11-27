@@ -94,10 +94,11 @@ export function showToastHelper(msg: IToastMsg) {
 } 
 
 // helper function and utils for ease..
-import { cGet } from "./fetch";
+import { cGet, cPut } from "./fetch";
 import { getRandomFoodItems } from "../data/_foodItems";
 
-const fetchURL = process.env.NEXT_PUBLIC_MENU_FETCH_URL;
+const menuFetchURL = process.env.NEXT_PUBLIC_MENU_FETCH_URL;
+const posFetchURL = process.env.NEXT_PUBLIC_POS_FETCH_URL;
 
 /**
  * Helper function to fetch all the menu item from database
@@ -105,7 +106,7 @@ const fetchURL = process.env.NEXT_PUBLIC_MENU_FETCH_URL;
  * on success, it will call the setter function
  */
 export const _fetchMenuItems = async (menuItemSetter: (items: any) => void) => {
-    const items = await cGet(fetchURL || '');
+    const items = await cGet(menuFetchURL || '');
 
     if (items) {
         menuItemSetter(items);
@@ -113,5 +114,33 @@ export const _fetchMenuItems = async (menuItemSetter: (items: any) => void) => {
     else {
         showToastHelper({text: "Error fetching menu items. Try again!", type:"error"});
         menuItemSetter((_: any) => getRandomFoodItems()); // instead of this you can directly pass callback, but since the setter pass items as args so..
+    }
+}
+
+/**
+ * Helper function to fetch all the menu item from database
+ * args: setter (usestate) function 
+ * on success, it will call the setter function
+ */
+export const _updatePOSMenuItems = async (data: any) => {
+    let mUpdateURL = menuFetchURL || '';
+    mUpdateURL += "?multiple=true";
+    
+    return await cPut(mUpdateURL, data);
+}
+
+/**
+ * Helper function to fetch all the menu item from database
+ * args: setter (usestate) function 
+ * on success, it will call the setter function
+ */
+export const _fetchInvoiceList = async (invoiceSetter: (items: any) => void) => {
+    const items = await cGet(posFetchURL || '');
+
+    if (items) {
+        invoiceSetter(items);
+    }
+    else {
+        showToastHelper({text: "Error fetching invoices. Try again!", type:"error"});
     }
 }
