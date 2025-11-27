@@ -30,6 +30,7 @@ NEXT_PUBLIC_ADMIN_CRED_PASSWORD="password_here"
 NEXT_PUBLIC_ADMIN_CRED_TOKEN="your_token"
 
 NEXT_PUBLIC_MENU_FETCH_URL="/api/menu/"
+NEXT_PUBLIC_POS_FETCH_URL="/api/pos/"
 NEXT_PUBLIC_PGDB_URL="source_to_postgresql_hosted_somewhere" 
 NEXT_PUBLIC_MONGODB_URI="source_to_mongodb_uri" 
 ```
