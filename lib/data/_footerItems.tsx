@@ -4,8 +4,16 @@ export const _footerItems = [
         url: "/"
     },
     {
-        title: "Sitemap",
-        url: "/sitemap"
+        title: "Dashboard",
+        url: "/dashboard"
+    },
+    {
+        title: "POS",
+        url: "/pos"
+    },
+    {
+        title: "Invoice",
+        url: "/pos/invoice"
     }
 ];
 

@@ -35,26 +35,14 @@ const getIcon = (media: string) => {
 
 const Footer = () => {
   return (
-    <footer className="w-full flex flex-col justify-between py-5 items-center min-h-52 bg-theme text-theme-w">
-        <div className="flex flex-col justify-start items-center text-sm">
-            <span className="font-bold text-lg">Other Links</span>
+    <footer className="w-full flex flex-col justify-between py-5 items-center min-h-16 bg-theme text-theme-w">
+        <div className="w-full flex flex-row justify-center items-center text-sm gap-10">
+            <span className="font-bold text-md">Quick Links:</span>
             {
             _footerItems.map((props, ind) => {
                 return <FooterItem key={ind} {...props} />
             })
             } 
-        </div>
-        <hr className="text-theme-cont border-2 border-r-4 w-[50%]"/>
-        {/* <div className="flex flex-row justify-evenly items-center w-[50%]">
-            {
-            _socialLinks.map((props, ind) => {
-                return <SocialItem key={ind} {...props} />
-            })
-            }
-        </div> */}
-        <div className="text-[0.7rem] text-center">
-            <p>All rights reserved | @{new Date().getFullYear()}</p>
-            <p>Powered by Next.js</p>
         </div>
     </footer>
   )
