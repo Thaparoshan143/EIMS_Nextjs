@@ -21,7 +21,7 @@ npm run dev
 ```
 
 > [!WARNING]
-> Make sure the .env file is there with required credentials populated.
+> Make sure the .env file with required credentials populated.
 
 example of `.env` file
 ```
@@ -35,20 +35,17 @@ NEXT_PUBLIC_PGDB_URL="source_to_postgresql_hosted_somewhere"
 NEXT_PUBLIC_MONGODB_URI="source_to_mongodb_uri" 
 ```
 
+> [!IMPORTANT]
+> Make sure that the in PGDB (table named `menu`) & in MongoDB (new cluster DB with db named `emis-trans` & db collectio named `eims-coll`) is created during first start.
+
 > [!Note]
-> For the DB URL, postgresql was hosted on [render](https://render.com/) during development\
-> It provides 30 days hosting for free tier. 
+> For the PGDB URL, postgresql was hosted on [render](https://render.com/) during development. It provides 30 days hosting for free tier.\
+> For invoices recording [Mongodb](https://www.mongodb.com/products/platform/atlas-database) was used. (DB name: `eims-trans` & DB collection: `eims-coll`)
 
 <hr />
 
-**Major Packages used**
-- axios
-- pg
-- mongodb
-- nextjs-toast-notify
-- refer to `packages.json` for more details..
-
-### For now only endpoint is `/api/menu` with following methods
+### Endpoint 
+**`/api/menu`** (for fetching, updating menu items)
 |Method|Params|Return|
 |------|------|------|
 |GET|-|object|
@@ -56,26 +53,21 @@ NEXT_PUBLIC_MONGODB_URI="source_to_mongodb_uri"
 |PUT|id, object|object|
 |DELETE|id|object|
 
-<hr />
+**`/api/pos`** (currently, only used for invoice record)
+|Method|Params|Return|
+|------|------|------|
+|GET|-|object|
+|POST|object|object|
 
-### Postgresql was used in development
-**For menu schema is as:**
-```
-id SERIAL PRIMARY KEY,
-name VARCHAR(100) NOT NULL,
-imgpath VARCHAR(500),
-price DECIMAL(10, 2) CHECK(price > 0),
-quantity INT CHECK(quantity > 0)
-```
-
-> [!IMPORTANT]
-> Make sure that the table is created during first start.
+> [!Important]
+> **NOT TO BE CONFUSED WITH ENPOINT NAME ABOVE.** Currently all the get/update of the menu items (like even buy.. in POS) is handled by the `/api/menu`. Only invoice fetching and posting is done by `/api/pos` as of now. **Payment Integrations** is left to be done.
 
 <hr />
 
 **Some Highlights**
 - **Menu**
 ![MENU](./lib/assets/Menu.png)
+
 - **Menu (Loading/Fetching from DB)**
 <img alt="MENULOADING" src="./lib/assets/MenuLoading.png" width="50%">
 
@@ -97,5 +89,50 @@ quantity INT CHECK(quantity > 0)
  - **Delete Item (Form)**
  ![DELETEITEMFORM](./lib/assets/DeleteItem.png)
 
- - **After Add, Update & Delete Item (Final updated table)**
- ![ITEMDELETED](./lib/assets/AfterDeleteItem.png)
+ - **POS interface**
+ ![POSINTERFACE](./lib/assets/PosInterface.png)
+
+ - **POS Add Item (Searchable)**
+ ![POSADDINTERFACE](./lib/assets/PosAddInterface.png)
+
+ - **Invoice Section**
+ ![INVOICE](./lib/assets/Invoice.png)
+
+
+<hr />
+
+### DB basic info:
+**For menu schema (Postgresql)**
+```
+id SERIAL PRIMARY KEY,
+name VARCHAR(100) NOT NULL,
+imgpath VARCHAR(500),
+price DECIMAL(10, 2) CHECK(price > 0),
+quantity INT CHECK(quantity >= 0)
+```
+
+**For invoice json format (Mongodb, eg)**
+```
+{
+  "tid": "4",
+  "items": [
+    {
+      "id": "5",
+      "name": "Chocolate",
+      "price": "100.00",
+      "quantity": "3"
+    }
+  ],
+  "total": "300",
+  "gTotal": "300",
+  "discount": "0",
+  "date": "11/27/2025, 2:07:44 PM"
+}
+```
+
+**Major Packages used**
+- axios
+- pg
+- mongodb
+- nextjs-toast-notify
+- refer to `packages.json` for more details..
